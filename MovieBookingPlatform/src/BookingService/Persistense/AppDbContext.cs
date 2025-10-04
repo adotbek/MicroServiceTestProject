@@ -1,17 +1,11 @@
-﻿using MovieService.Persistense.EntityConfigurations;
+﻿using BookingService.Entities;
 using Microsoft.EntityFrameworkCore;
-using MovieService.Entities;
-using BookingService.Entities;
 
-namespace MovieService.Persistense;
+namespace BookingService.Persistense;
 
 public class AppDbContext : DbContext
 {
-    public DbSet<CinemaHall> CinemaHalls { get; set; }
-    public DbSet<Movie> Movies { get; set; }
-    public DbSet<Seat> Seats{ get; set; }
-    public DbSet<Showtime> Showtimes { get; set; }
-
+    public DbSet<Booking> Bookings { get; set; }
 
 
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
@@ -25,4 +19,3 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 }
-

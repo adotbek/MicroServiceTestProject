@@ -27,4 +27,8 @@
     <Folder Include="Configurations\Settings\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\BookingService\BookingService.csproj" />
+  </ItemGroup>
+
 </Project>
