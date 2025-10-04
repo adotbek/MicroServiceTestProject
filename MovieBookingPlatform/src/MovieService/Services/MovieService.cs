@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MovieService.Dtos;
 using MovieService.Entities;
 using MovieService.Persistense;
@@ -8,79 +7,66 @@ namespace MovieService.Services;
 
 public class MovieService : IMovieService
 {
-    private readonly AppDbContext _context;
-    public MovieService(AppDbContext context)
+    private readonly AppDbContext _appDbContext;
+
+    public MovieService(AppDbContext appDbContext)
     {
-        _context = context;
+        _appDbContext = appDbContext;
     }
+
     public async Task<long> AddAsync(MovieCreateDto movieCreateDto)
     {
-        var entity = new Movie
+        var movie = new Movie
         {
             Title = movieCreateDto.Title,
             Description = movieCreateDto.Description,
             DurationMinutes = movieCreateDto.DurationMinutes,
             Language = movieCreateDto.Language,
             Genre = movieCreateDto.Genre,
+            ReleaseDate = movieCreateDto.ReleaseDate ?? DateTime.UtcNow,
+            Rating = movieCreateDto.Rating ?? 0,
+            IsActive = movieCreateDto.IsActive,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
         };
-        _context.Add(entity);
-        await _context.SaveChangesAsync();
-        return entity.MovieId;
+
+        await _appDbContext.Movies.AddAsync(movie);
+        await _appDbContext.SaveChangesAsync();
+        return movie.MovieId;
     }
 
-    public async Task DeleteAsync(long movieId)
+    public Task DeleteAsync(long movieId)
     {
-        var entity = await _context.Movies.FindAsync(movieId);
-        if (entity is not null)
-        {
-            _context.Movies.Remove(entity);
-            await _context.SaveChangesAsync();
-        }
+        throw new NotImplementedException();
     }
 
     public async Task<IEnumerable<MovieDto>> GetAllAsync()
     {
-        return await _context.Movies
-           .Select(m => new MovieDto
-           {
-               MovieId = m.MovieId,
-               Title = m.Title,
-               Description = m.Description,
-               DurationMinutes = m.DurationMinutes,
-               ReleaseDate = m.ReleaseDate,
-               Language = m.Language,
-               Genre = m.Genre
-           }).ToListAsync();
+        var movies = await _appDbContext.Movies.ToListAsync();
+
+        return movies.Select(m => new MovieDto
+        {
+            MovieId = m.MovieId,
+            Title = m.Title,
+            Description = m.Description,
+            DurationMinutes = m.DurationMinutes,
+            Language = m.Language,
+            Genre = m.Genre,
+            ReleaseDate = m.ReleaseDate,
+            Rating = m.Rating,
+            IsActive = m.IsActive,
+            CreatedAt = m.CreatedAt,
+            UpdatedAt = m.UpdatedAt
+        });
     }
 
-    public async Task<MovieDto> GetByIdAsync(long movieId)
+    public Task<MovieDto> GetByIdAsync(long movieId)
     {
-        var entity = await _context.Movies.FindAsync(movieId);
-        if (entity is null) return null;
-        return new MovieDto
-        {
-            MovieId = entity.MovieId,
-            Title = entity.Title,
-            Description = entity.Description,
-            DurationMinutes = entity.DurationMinutes,
-            ReleaseDate = entity.ReleaseDate,
-            Language = entity.Language,
-            Genre = entity.Genre
-        };
+        throw new NotImplementedException();
     }
 
-    public async Task UpdateAsync(MovieUpdateDto movieUpdateDto)
+    public Task UpdateAsync(MovieUpdateDto movieUpdateDto)
     {
-        var entity = await _context.Movies.FindAsync(movieUpdateDto.MovieId);
-        if (entity is not null)
-        {
-            entity.Title = movieUpdateDto.Title;
-            entity.DurationMinutes = movieUpdateDto.DurationMinutes;
-            entity.Description = movieUpdateDto.Description;
-            entity.Genre = movieUpdateDto.Genre;
-
-            _context.Update(entity);
-            await _context.SaveChangesAsync();
-        } 
+        throw new NotImplementedException();
     }
 }
